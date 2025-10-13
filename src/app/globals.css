@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  /* Estas variables no las usaremos por defecto, pero es bueno tenerlas para un futuro modo claro */
+  --background-light: #F3F4F6;
+  --foreground-light: #111827;
+  --primary-light: #D90046; /* Un fucsia menos intenso para fondo claro */
+  --secondary-light: #00A3BF; /* Un cian menos intenso */
+
+  /* NUESTRO TEMA OSCURO POR DEFECTO */
+  --background-dark: #111111;
+  --foreground-dark: #FFFFFF;
+  --primary-dark: #F50057;      /* Fucsia Neón */
+  --secondary-dark: #00E5FF;    /* Cian Neón */
+  --border-dark: #27272A;
+  
+}
+
+body {
+  /* Asignamos los valores del tema oscuro por defecto */
+  --background: var(--background-dark);
+  --foreground: var(--foreground-dark);
+  --primary: var(--primary-dark);
+  --secondary: var(--secondary-dark);
+  --border: var(--border-dark);
+  
+
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* Clases de utilidad para usar en nuestros componentes */
+.bg-background { background-color: var(--background); }
+.text-foreground { color: var(--foreground); }
+.text-primary { color: var(--primary); }
+.text-secondary { color: var(--secondary); }
+.border-border { border-color: var(--border); }
+.bg-primary { background-color: var(--primary); }
+
+/* Efecto hover */
+.hover\:bg-primary:hover { background-color: var(--primary); }
+.hover\:text-primary:hover { color: var(--primary); }
+
+/* Animación para el logo de BarberApp */
+@keyframes logo-neon-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px var(--primary)) drop-shadow(0 0 6px var(--primary));
+  }
+  50% {
+    filter: drop-shadow(0 0 5px var(--secondary)) drop-shadow(0 0 10px var(--secondary));
+  }
+}
+
+.animate-logo-glow {
+  animation: logo-neon-glow 4s ease-in-out infinite;
+}
+
+.card-neon-hover {
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.card-neon-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary);
+}
