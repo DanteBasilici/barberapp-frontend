@@ -1,19 +1,20 @@
+// src/app/auth/login/page.tsx - VERSIÓN FINAL
 export default function LoginPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const googleLoginUrl = `${apiUrl}/auth/google`;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#111111] p-4">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="text-center">
-        <h1 className="text-4xl sm:text-5xl font-bold text-white drop-shadow-[0_0_10px_rgba(245,0,87,0.5)]">
+        <h1 className="text-4xl sm:text-5xl font-bold text-foreground animate-text-neon-pulse">
           Bienvenido a BarberApp
         </h1>
-        <p className="mt-4 text-gray-400">
+        <p className="mt-4 text-foreground/80">
           Usa tu cuenta de Google para acceder a tu dashboard.
         </p>
         <a
           href={googleLoginUrl}
-          className="mt-10 inline-flex items-center justify-center gap-3 bg-gray-800 text-white font-semibold text-lg px-6 py-3 rounded-lg border border-gray-600 transition-all duration-300 ease-in-out hover:bg-gray-700 hover:shadow-lg hover:shadow-fuchsia-neon/30 hover:-translate-y-1"
+          className="mt-10 inline-flex items-center justify-center gap-3 bg-gray-800 text-white font-semibold text-lg px-6 py-3 rounded-lg border border-gray-600 transition-all duration-300 ease-in-out hover:bg-gray-700 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-1"
         >
           <svg
             className="w-6 h-6"
