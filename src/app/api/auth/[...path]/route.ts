@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { path: string[] } }
@@ -13,7 +15,7 @@ export async function GET(
   }
 
   const path = params.path.join('/');
-  const backendUrl = `http://localhost:3001/auth/${path}`;
+  const backendUrl = `${API_URL}/auth/${path}`;
 
   try {
     const backendResponse = await fetch(backendUrl, {

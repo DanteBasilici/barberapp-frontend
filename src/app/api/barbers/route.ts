@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-const BACKEND_URL = 'http://localhost:3001/barbers';
+const BACKEND_URL = `${process.env.NEXT_PUBLIC_API_URL}/barbers`;
 
-// GET /api/barbers
 export async function GET() {
   const cookieStore = cookies();
   const token = cookieStore.get('access_token');
@@ -31,7 +30,6 @@ export async function GET() {
   }
 }
 
-// POST /api/barbers
 export async function POST(request: NextRequest) {
   const cookieStore = cookies();
   const token = cookieStore.get('access_token');
