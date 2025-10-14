@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LayoutDashboard, Users, Scissors, DollarSign, LogOut } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
+import Cookies from 'js-cookie';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
@@ -23,6 +24,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
       <aside className="w-64 flex-shrink-0 bg-background border-r border-border flex-col hidden md:flex">
         <SidebarContent />
       </aside>
+
       <div 
         className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
         onClick={() => setIsSidebarOpen(false)}
@@ -37,8 +39,13 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
 }
 
 const SidebarContent = () => {
-  // Construimos la URL de logout dinámicamente
-  const logoutUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`;
+  const handleLogout = () => {
+    // El frontend borra su propia cookie. Esto SIEMPRE funciona.
+    Cookies.remove('access_token');
+    
+    // Forzamos una recarga completa a la página de login.
+    window.location.href = '/auth/login';
+  };
 
   return (
     <>
@@ -66,14 +73,13 @@ const SidebarContent = () => {
         </ul>
       </nav>
       <div className="p-4 border-t border-border">
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
-        <a 
-          href={logoutUrl}
+        <button 
+          onClick={handleLogout}
           className="w-full flex items-center p-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
         >
           <LogOut className="h-5 w-5 mr-3" />
           <span>Cerrar Sesión</span>
-        </a>
+        </button>
       </div>
     </>
   );
