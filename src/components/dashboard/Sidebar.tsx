@@ -23,7 +23,6 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
       <aside className="w-64 flex-shrink-0 bg-background border-r border-border flex-col hidden md:flex">
         <SidebarContent />
       </aside>
-
       <div 
         className={`fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
         onClick={() => setIsSidebarOpen(false)}
@@ -38,6 +37,9 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
 }
 
 const SidebarContent = () => {
+  // Construimos la URL de logout dinámicamente
+  const logoutUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`;
+
   return (
     <>
       <div className="h-20 flex items-center justify-center border-b border-border">
@@ -66,7 +68,7 @@ const SidebarContent = () => {
       <div className="p-4 border-t border-border">
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a 
-          href="http://localhost:3001/auth/logout"
+          href={logoutUrl}
           className="w-full flex items-center p-3 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
         >
           <LogOut className="h-5 w-5 mr-3" />
