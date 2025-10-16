@@ -169,34 +169,33 @@ export default function BarbersPage() {
                 <li className="p-4 text-foreground/70">Aún no has invitado a ningún barbero.</li>
               ) : (
                 barbers.map((barber) => (
-                  <li key={barber.id} className="flex items-center justify-between p-4 border-b border-border last:border-b-0">
+                  <li key={barber.id} className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 border-b border-border last:border-b-0 gap-4">
                     {editingBarberId === barber.id ? (
-                      <div className="flex-1 flex items-center gap-2">
-                        <input type="text" value={editingName} onChange={(e) => setEditingName(e.target.value)} className="bg-white/10 border border-secondary rounded-md px-2 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
-                        <p className="text-sm text-foreground/60">{barber.email}</p>
-                      </div>
-                    ) : (
-                      <div>
-                        <p className="font-semibold text-foreground">{barber.name}</p>
-                        <p className="text-sm text-foreground/60">{barber.email}</p>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-4">
-                      {editingBarberId === barber.id ? (
-                        <>
+                      <>
+                        <div className="flex-1 w-full">
+                          <input type="text" value={editingName} onChange={(e) => setEditingName(e.target.value)} className="w-full bg-white/10 border border-secondary rounded-md px-2 py-1 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
+                          <p className="text-sm text-foreground/60 mt-1">{barber.email}</p>
+                        </div>
+                        <div className="flex items-center gap-4 self-end">
                           <button onClick={() => handleSaveEdit(barber.id)} className="text-green-400 hover:text-green-300 transition-colors"><Save className="w-5 h-5" /></button>
                           <button onClick={handleCancelEdit} className="text-red-500 hover:text-red-400 transition-colors"><XCircle className="w-5 h-5" /></button>
-                        </>
-                      ) : (
-                        <>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex-1">
+                          <p className="font-semibold text-foreground">{barber.name}</p>
+                          <p className="text-sm text-foreground/60">{barber.email}</p>
+                        </div>
+                        <div className="flex items-center gap-4 self-end md:self-center">
                           <span className={`px-2 py-1 text-xs rounded-full ${barber.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                             {barber.status}
                           </span>
                           <button onClick={() => handleEdit(barber)} className="text-foreground/70 hover:text-secondary transition-colors"><Edit className="w-5 h-5" /></button>
                           <button onClick={() => handleDeactivate(barber.id, barber.name)} className="text-foreground/70 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
-                        </>
-                      )}
-                    </div>
+                        </div>
+                      </>
+                    )}
                   </li>
                 ))
               )}
@@ -213,19 +212,11 @@ export default function BarbersPage() {
         <p className="text-sm text-foreground/80">{modalContent.message}</p>
         <div className="mt-6 flex justify-end gap-4">
           {modalContent.showCancel && (
-            <button
-              type="button"
-              onClick={() => setIsModalOpen(false)}
-              className="inline-flex justify-center rounded-md border border-transparent bg-white/10 px-4 py-2 text-sm font-medium text-foreground/80 hover:bg-white/20 focus:outline-none"
-            >
+            <button type="button" onClick={() => setIsModalOpen(false)} className="inline-flex justify-center rounded-md border border-transparent bg-white/10 px-4 py-2 text-sm font-medium text-foreground/80 hover:bg-white/20 focus:outline-none">
               Cancelar
             </button>
           )}
-          <button
-            type="button"
-            onClick={modalContent.onConfirm}
-            className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-bold text-secondary focus:outline-none ${modalContent.title.includes('Confirmar') ? 'bg-red-600 hover:bg-red-500' : 'bg-primary hover:bg-opacity-80'}`}
-          >
+          <button type="button" onClick={modalContent.onConfirm} className={`inline-flex justify-center rounded-md border border-transparent px-4 py-2 text-sm font-bold text-secondary focus:outline-none ${modalContent.title.includes('Confirmar') ? 'bg-red-600 hover:bg-red-500' : 'bg-primary hover:bg-opacity-80'}`}>
             {modalContent.title.includes('Confirmar') ? 'Confirmar' : 'Aceptar'}
           </button>
         </div>
