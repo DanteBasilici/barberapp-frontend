@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import type { Barber } from '@/types/barber'; // <-- ¡Lo importamos de nuestra nueva ubicación!
+import type { Barber } from '@/types/barber';
+import { Trash2, Edit } from 'lucide-react';
 
 interface CreateBarberDto {
   name: string;
@@ -12,7 +13,6 @@ export default function BarbersPage() {
   const [barbers, setBarbers] = useState<Barber[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [newBarber, setNewBarber] = useState<CreateBarberDto>({ name: '', email: '' });
 
   const fetchBarbers = async () => {
@@ -52,10 +52,25 @@ export default function BarbersPage() {
       }
       
       setNewBarber({ name: '', email: '' });
-      await fetchBarbers(); // Usamos await para asegurar que la lista se refresca
-
+      await fetchBarbers();
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Error al crear');
+    }
+  };
+
+  const handleDeactivate = async (barberId: string) => {
+    if (confirm('¿Estás seguro de que quieres desactivar a este barbero?')) {
+      try {
+        const res = await fetch(`/api/barbers/${barberId}`, {
+          method: 'DELETE',
+        });
+        if (!res.ok) {
+          throw new Error('No se pudo desactivar al barbero');
+        }
+        await fetchBarbers(); // Refresca la lista
+      } catch (err) {
+        alert(err instanceof Error ? err.message : 'Error al desactivar');
+      }
     }
   };
 
@@ -106,9 +121,14 @@ export default function BarbersPage() {
                     <p className="font-semibold text-foreground">{barber.name}</p>
                     <p className="text-sm text-foreground/60">{barber.email}</p>
                   </div>
-                  <span className={`px-2 py-1 text-xs rounded-full ${barber.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                    {barber.status}
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => alert('Función de editar próximamente!')} className="text-foreground/70 hover:text-secondary transition-colors">
+                      <Edit className="w-5 h-5" />
+                    </button>
+                    <button onClick={() => handleDeactivate(barber.id)} className="text-foreground/70 hover:text-red-500 transition-colors">
+                      <Trash2 className="w-5 h-5" />
+                    </button>
+                  </div>
                 </li>
               ))
             )}
