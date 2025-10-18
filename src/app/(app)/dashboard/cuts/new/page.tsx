@@ -17,7 +17,6 @@ export default function RegisterCutPage() {
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [alertModalContent, setAlertModalContent] = useState({ title: '', message: '' });
 
-  // Estados para el modal de "Nuevo Cliente"
   const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
   const [newClientName, setNewClientName] = useState('');
 
@@ -33,6 +32,8 @@ export default function RegisterCutPage() {
       setServices(servicesData);
     } catch (error) {
       console.error("Failed to fetch data", error);
+      setAlertModalContent({ title: 'Error de Carga', message: 'No se pudieron cargar los clientes y servicios. Intenta recargar la página.' });
+      setIsAlertModalOpen(true);
     }
   };
 
@@ -55,12 +56,10 @@ export default function RegisterCutPage() {
       
       const createdClient = await res.json();
       
-      // Cerramos modal, reseteamos el nombre y refrescamos la lista de clientes
       setIsNewClientModalOpen(false);
       setNewClientName('');
-      await fetchInitialData(); // Volvemos a cargar todo
       
-      // ¡Seleccionamos automáticamente al cliente recién creado!
+      setClients(prevClients => [...prevClients, createdClient]);
       setSelectedClientId(createdClient.id);
 
     } catch (error) {
@@ -71,7 +70,7 @@ export default function RegisterCutPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!selectedClientId || !selectedServiceId) {
-      setAlertModalContent({ title: 'Error', message: 'Por favor, selecciona un cliente y un servicio.' });
+      setAlertModalContent({ title: 'Campos Incompletos', message: 'Por favor, selecciona un cliente y un servicio.' });
       setIsAlertModalOpen(true);
       return;
     }
@@ -83,7 +82,10 @@ export default function RegisterCutPage() {
         body: JSON.stringify({ clientId: selectedClientId, serviceId: selectedServiceId, notes }),
       });
 
-      if (!res.ok) throw new Error('Error al registrar el corte');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Error al registrar el corte');
+      }
 
       setAlertModalContent({ title: '¡Éxito!', message: 'El corte ha sido registrado correctamente.' });
       setIsAlertModalOpen(true);
@@ -92,7 +94,7 @@ export default function RegisterCutPage() {
       setSelectedServiceId('');
       setNotes('');
     } catch (err) {
-      setAlertModalContent({ title: 'Error', message: err instanceof Error ? err.message : 'Ocurrió un error.' });
+      setAlertModalContent({ title: 'Error', message: err instanceof Error ? err.message : 'Ocurrió un error al registrar el corte.' });
       setIsAlertModalOpen(true);
     }
   };

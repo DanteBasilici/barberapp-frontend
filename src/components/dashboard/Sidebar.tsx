@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { LayoutDashboard, Users, Scissors, DollarSign, LogOut, ListPlus } from 'lucide-react';
+import { LayoutDashboard, Users, Scissors, DollarSign, LogOut, ListPlus, ClipboardList } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 import Cookies from 'js-cookie';
 
@@ -11,6 +11,7 @@ const navItems = [
   { icon: Users, label: 'Barberos', href: '/dashboard/barbers' },
   { icon: Scissors, label: 'Clientes', href: '/dashboard/clients' },
   { icon: ListPlus, label: 'Servicios', href: '/dashboard/services' },
+  { icon: ClipboardList, label: 'Cortes', href: '/dashboard/cuts' },
   { icon: DollarSign, label: 'Finanzas', href: '/dashboard/finances' },
 ];
 
@@ -41,10 +42,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: SidebarProp
 
 const SidebarContent = () => {
   const handleLogout = () => {
-    // El frontend borra su propia cookie. Esto SIEMPRE funciona.
     Cookies.remove('access_token');
-    
-    // Forzamos una recarga completa a la página de login.
     window.location.href = '/auth/login';
   };
 
