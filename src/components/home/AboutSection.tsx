@@ -4,14 +4,14 @@ export default function AboutSection() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="aspect-video w-full rounded-lg overflow-hidden border border-border">
-            <iframe
-              className="w-full h-full"
-              src="https://www.youtube.com/embed/mK9g2j-nSgU" // Tu video de "Vlog Life"
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen>
-            </iframe>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+              src="/intro.mp4"
+            />
           </div>
           <div>
             <h2 className="text-4xl md:text-5xl font-bold text-foreground">

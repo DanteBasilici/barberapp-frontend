@@ -2,20 +2,23 @@
 
 import { useEffect, useState } from 'react';
 import type { Client } from '@/types/client';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, Save, XCircle } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 
-interface CreateClientDto {
+interface ClientDto {
   name: string;
-  phone?: string;
-  notes?: string;
+  phone: string;
+  notes: string;
 }
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [newClient, setNewClient] = useState<CreateClientDto>({ name: '', phone: '', notes: '' });
+  const [newClient, setNewClient] = useState<ClientDto>({ name: '', phone: '', notes: '' });
+
+  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [editingData, setEditingData] = useState<ClientDto>({ name: '', phone: '', notes: '' });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {}, showCancel: false });
@@ -85,6 +88,30 @@ export default function ClientsPage() {
     });
     setIsModalOpen(true);
   };
+  
+  const handleEdit = (client: Client) => {
+    setEditingClient(client);
+    setEditingData({ name: client.name, phone: client.phone || '', notes: client.notes || '' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingClient(null);
+  };
+
+  const handleSaveEdit = async (clientId: string) => {
+    try {
+      await fetch(`/api/clients/${clientId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingData),
+      });
+      setEditingClient(null);
+      await fetchClients();
+    } catch (err) {
+      setModalContent({ title: 'Error', message: 'Error al actualizar el cliente.', onConfirm: () => setIsModalOpen(false), showCancel: false });
+      setIsModalOpen(true);
+    }
+  };
 
   return (
     <>
@@ -109,15 +136,30 @@ export default function ClientsPage() {
             <ul>
               {clients.length === 0 ? <li className="p-4 text-foreground/70">Aún no has añadido ningún cliente.</li>
               : clients.map((client) => (
-                  <li key={client.id} className="flex items-center justify-between p-4 border-b border-border last:border-b-0">
-                    <div>
-                      <p className="font-semibold text-foreground">{client.name}</p>
-                      <p className="text-sm text-foreground/60">{client.phone || 'Sin teléfono'}</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <button onClick={() => alert('Función de editar próximamente!')} className="text-foreground/70 hover:text-secondary transition-colors"><Edit className="w-5 h-5" /></button>
-                      <button onClick={() => handleDeactivate(client.id, client.name)} className="text-foreground/70 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
-                    </div>
+                  <li key={client.id} className="p-4 border-b border-border last:border-b-0">
+                    {editingClient?.id === client.id ? (
+                      <div className="flex flex-col gap-2">
+                        <input type="text" value={editingData.name} onChange={(e) => setEditingData({...editingData, name: e.target.value})} className="bg-white/10 border border-secondary rounded-md px-2 py-1 w-full text-foreground" />
+                        <input type="tel" value={editingData.phone} onChange={(e) => setEditingData({...editingData, phone: e.target.value})} className="bg-white/10 border border-border rounded-md px-2 py-1 w-full text-foreground" />
+                        <textarea value={editingData.notes} onChange={(e) => setEditingData({...editingData, notes: e.target.value})} className="bg-white/10 border border-border rounded-md px-2 py-1 w-full text-foreground" rows={2}></textarea>
+                        <div className="flex items-center gap-4 self-end mt-2">
+                          <button onClick={() => handleSaveEdit(client.id)} className="text-green-400 hover:text-green-300 transition-colors"><Save className="w-5 h-5" /></button>
+                          <button onClick={handleCancelEdit} className="text-red-500 hover:text-red-400 transition-colors"><XCircle className="w-5 h-5" /></button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <p className="font-semibold text-foreground">{client.name}</p>
+                          <p className="text-sm text-foreground/60">{client.phone || 'Sin teléfono'}</p>
+                          {client.notes && <p className="text-xs text-foreground/50 mt-1 italic">"{client.notes}"</p>}
+                        </div>
+                        <div className="flex items-center gap-4 self-end sm:self-center flex-shrink-0">
+                          <button onClick={() => handleEdit(client)} className="text-foreground/70 hover:text-secondary transition-colors"><Edit className="w-5 h-5" /></button>
+                          <button onClick={() => handleDeactivate(client.id, client.name)} className="text-foreground/70 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
+                        </div>
+                      </div>
+                    )}
                   </li>
               ))}
             </ul>
