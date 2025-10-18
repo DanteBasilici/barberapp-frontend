@@ -29,7 +29,7 @@ export default function PricingSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Columna de Tarjeta de Precio a la Izquierda */}
           <div className="lg:order-1">
-            <div className="bg-background border border-border rounded-lg p-8 h-full flex flex-col">
+            <div className="bg-background border border-border rounded-lg p-8 h-full flex justify-center items-center flex-col">
               <h3 className="text-2xl font-bold text-secondary">Plan BarberApp</h3>
               <p className="mt-2 text-5xl font-extrabold text-foreground">
                 ARS $12.000

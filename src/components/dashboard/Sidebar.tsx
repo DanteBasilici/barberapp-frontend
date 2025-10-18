@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { LayoutDashboard, Users, Scissors, DollarSign, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Scissors, DollarSign, LogOut, ListPlus } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 import Cookies from 'js-cookie';
 
@@ -10,6 +10,7 @@ const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Users, label: 'Barberos', href: '/dashboard/barbers' },
   { icon: Scissors, label: 'Clientes', href: '/dashboard/clients' },
+  { icon: ListPlus, label: 'Servicios', href: '/dashboard/services' },
   { icon: DollarSign, label: 'Finanzas', href: '/dashboard/finances' },
 ];
 
