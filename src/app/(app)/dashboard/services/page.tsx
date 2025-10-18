@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { Service } from '@/types/service';
-import { Trash2, Edit } from 'lucide-react';
+import { Trash2, Edit, Save, XCircle } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 
 interface ServiceDto {
@@ -15,6 +15,9 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [newService, setNewService] = useState<ServiceDto>({ name: '', price: 0 });
+
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const [editingData, setEditingData] = useState<ServiceDto>({ name: '', price: 0 });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: '', message: '', onConfirm: () => {}, showCancel: false });
@@ -40,7 +43,7 @@ export default function ServicesPage() {
   useEffect(() => {
     fetchServices();
   }, []);
-  
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -76,6 +79,30 @@ export default function ServicesPage() {
     setIsModalOpen(true);
   };
 
+  const handleEdit = (service: Service) => {
+    setEditingServiceId(service.id);
+    setEditingData({ name: service.name, price: service.price });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingServiceId(null);
+  };
+
+  const handleSaveEdit = async (serviceId: string) => {
+    try {
+      await fetch(`/api/services/${serviceId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...editingData, price: Number(editingData.price) }),
+      });
+      setEditingServiceId(null);
+      await fetchServices();
+    } catch (err) {
+      setModalContent({ title: 'Error', message: 'No se pudo actualizar el servicio.', onConfirm: () => setIsModalOpen(false), showCancel: false });
+      setIsModalOpen(true);
+    }
+  };
+
   return (
     <>
       <div>
@@ -84,7 +111,7 @@ export default function ServicesPage() {
           <h2 className="text-xl font-semibold text-secondary mb-4">Añadir Nuevo Servicio</h2>
           <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4">
             <input type="text" placeholder="Nombre del Servicio (ej: Corte de Pelo)" value={newService.name} onChange={(e) => setNewService({ ...newService, name: e.target.value })} className="flex-1 bg-white/5 border border-border rounded-md px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" required />
-            <input type="number" placeholder="Precio (ej: 12000)" value={newService.price || ''} onChange={(e) => setNewService({ ...newService, price: parseFloat(e.target.value) || 0 })} className="w-40 bg-white/5 border border-border rounded-md px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" required />
+            <input type="number" step="0.01" placeholder="Precio (ej: 12000)" value={newService.price || ''} onChange={(e) => setNewService({ ...newService, price: parseFloat(e.target.value) || 0 })} className="w-40 bg-white/5 border border-border rounded-md px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary" required />
             <button type="submit" className="bg-primary text-secondary font-bold px-6 py-2 rounded-md hover:scale-105 transition-transform">
               Guardar Servicio
             </button>
@@ -99,13 +126,29 @@ export default function ServicesPage() {
               {services.length === 0 ? <li className="p-4 text-foreground/70">Aún no has añadido ningún servicio.</li>
               : services.map((service) => (
                   <li key={service.id} className="flex items-center justify-between p-4 border-b border-border last:border-b-0">
-                    <div>
-                      <p className="font-semibold text-foreground">{service.name}</p>
-                      <p className="text-sm text-foreground/60">ARS ${service.price.toLocaleString('es-AR')}</p>
-                    </div>
+                    {editingServiceId === service.id ? (
+                      <div className="flex-1 flex items-center gap-4">
+                        <input type="text" value={editingData.name} onChange={(e) => setEditingData({ ...editingData, name: e.target.value })} className="flex-1 bg-white/10 border border-secondary rounded-md px-2 py-1 text-foreground" />
+                        <input type="number" step="0.01" value={editingData.price} onChange={(e) => setEditingData({ ...editingData, price: parseFloat(e.target.value) || 0 })} className="w-32 bg-white/10 border border-secondary rounded-md px-2 py-1 text-foreground" />
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="font-semibold text-foreground">{service.name}</p>
+                        <p className="text-sm text-foreground/60">ARS ${service.price.toLocaleString('es-AR')}</p>
+                      </div>
+                    )}
                     <div className="flex items-center gap-4">
-                      <button onClick={() => alert('Próximamente!')} className="text-foreground/70 hover:text-secondary"><Edit className="w-5 h-5" /></button>
-                      <button onClick={() => handleDeactivate(service.id, service.name)} className="text-foreground/70 hover:text-red-500"><Trash2 className="w-5 h-5" /></button>
+                      {editingServiceId === service.id ? (
+                        <>
+                          <button onClick={() => handleSaveEdit(service.id)} className="text-green-400 hover:text-green-300"><Save className="w-5 h-5" /></button>
+                          <button onClick={handleCancelEdit} className="text-red-500 hover:text-red-400"><XCircle className="w-5 h-5" /></button>
+                        </>
+                      ) : (
+                        <>
+                          <button onClick={() => handleEdit(service)} className="text-foreground/70 hover:text-secondary"><Edit className="w-5 h-5" /></button>
+                          <button onClick={() => handleDeactivate(service.id, service.name)} className="text-foreground/70 hover:text-red-500"><Trash2 className="w-5 h-5" /></button>
+                        </>
+                      )}
                     </div>
                   </li>
               ))}
