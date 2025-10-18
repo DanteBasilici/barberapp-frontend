@@ -5,6 +5,7 @@ export default function AboutSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="aspect-video w-full rounded-lg overflow-hidden border border-border">
             <video
+              controls
               autoPlay
               loop
               muted
